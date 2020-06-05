@@ -154,6 +154,22 @@ async function render(_opts = {}) {
     }
 
     if (opts.output === 'pdf') {
+        if (opts.pdf.height == 'auto') {
+			var t= await page.evaluate(() => {
+			var max = 0;
+			document.querySelectorAll('*').forEach(function(node) {
+				if (max < node.scrollHeight) {
+					max = node.scrollHeight;
+					maxElement = node.tagName;
+				}
+			});
+			return max;
+			});
+			opts.pdf.height = Math.max(parseInt(t) * 1.5, 800);
+			opts.pdf.width = '8.27in';
+			opts.pdf.format = undefined;
+			logger.info('height: ' + opts.pdf.height);
+	    }
       data = await page.pdf(opts.pdf);
     } else if (opts.output === 'html') {
       data = await page.evaluate(() => document.body.innerHTML);
