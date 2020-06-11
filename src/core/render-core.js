@@ -155,19 +155,29 @@ async function render(_opts = {}) {
     if (opts.output === 'pdf') {
 		if (opts.pdf.height == 'auto') {
 			var t= await page.evaluate(() => {
-			var max = 0;
+			var maxH = 0;
+			var maxW = 0;
 			document.querySelectorAll('*').forEach(function(node) {
 				var h = Math.max(node.scrollHeight, node.offsetHeight, node.clientHeight);
-				if (max < h) {
-					max = h;
+				if (maxH < h) {
+					maxH = h;
+				}
+				var w = Math.max(node.scrollWidth, node.offsetWidth, node.clientWidth);
+				if (maxW < w) {
+					maxW = w;
 				}
 			});
-			return max;
+			return {
+				w: maxW,
+				h: maxH
+			};
 			});
-			opts.pdf.height = Math.max(t * 1.5, 800);
-			opts.pdf.width = '8.27in';
+			opts.pdf.height = Math.max(t.h, 1130);
+			opts.pdf.width = Math.max(t.w, 800);
 			opts.pdf.format = undefined;
 		}
+		logger.info('Height ' + opts.pdf.height);
+		logger.info('Width ' + opts.pdf.height);
       data = await page.pdf(opts.pdf);
     } else if (opts.output === 'html') {
       data = await page.evaluate(() => document.body.innerHTML);
