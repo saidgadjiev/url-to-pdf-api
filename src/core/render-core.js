@@ -164,7 +164,7 @@ async function render(_opts = {}) {
 			});
 			return max;
 			});
-			opts.pdf.height = Math.max(parseInt(t) * 1.5, 800);
+			opts.pdf.height = Math.max(t * 1.5, 800);
 			opts.pdf.width = '8.27in';
 			opts.pdf.format = undefined;
 		}
